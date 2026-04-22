@@ -2,85 +2,73 @@
 
 # Fake News Detection - End-to-End NLP Project
 
-> **IronHack - Week 4 - Day 3**
-> A 3-day team project to build a binary text classifier that decides whether a news headline is **Fake (0)** or **Real (1)**.
+A small team project for IronHack week 4. We had three days to build a classifier that reads a news headline and decides whether it's fake (0) or real (1). The whole pipeline lives in one notebook so it's easy to follow from start to finish.
 
----
+## The team
 
-## Team
+| Member | What they own |
+|--------|--------------|
+| Sabeur | Data, cleaning, EDA, the `clean_text()` function |
+| Philippe | Vectoriser, models, hyperparameter tuning |
+| Joao | Train/val split, evaluation, predictions, final submission |
 
-| # | Member | Role | Main Deliverable |
-|---|--------|------|------------------|
-| 1 | **Sabeur** | Data & Preprocessing Lead | `clean_text(text) -> processed_text` |
-| 2 | **Philippe** | Feature Engineering & Modeling Lead | `model_pipeline.fit(X_train, y_train)` |
-| 3 | **Joao** | Evaluation, Testing & Deployment Lead | `predictions = model.predict(X_test)` |
-
----
-
-## Project Structure
+## Repo layout
 
 ```
 fake-news-detection-nlp/
 ├── dataset/
-│   ├── training_data_lowercase.csv          # label, headline (0=Fake, 1=Real)
-│   └── testing_data_lowercase_nolabels.csv  # headline only - predictions to generate
+│   ├── training_data_lowercase.csv          # label + headline (0=fake, 1=real)
+│   └── testing_data_lowercase_nolabels.csv  # headline only - what we predict
 ├── doc/
 │   └── Presentation template.pptx
-├── main.ipynb                               # full end-to-end pipeline notebook
+├── main.ipynb                               # everything happens here
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
----
-
-## End-to-End Pipeline
+## How the pipeline flows
 
 ```
-Raw Data --> Data Cleaning --> Preprocessing --> Feature Engineering --> Model Training --> Evaluation --> Predictions
- (csv)        (Sabeur)         (Sabeur)           (Philippe)             (Philippe)        (Joao)        (Joao)
+raw csv  ->  clean  ->  preprocess  ->  vectorise  ->  train  ->  evaluate  ->  predict
+             Sabeur     Sabeur          Philippe       Philippe   Joao         Joao
 ```
 
-| Step | Owner | Description |
-|------|-------|-------------|
-| 1. Data Loading & Cleaning | Sabeur | Load CSVs, fix formatting, drop duplicates / NaNs |
-| 2. EDA | Sabeur | Class balance, headline length, word frequencies |
-| 3. NLP Preprocessing | Sabeur | Tokenize, stopwords, punctuation, lemmatization -> `clean_text()` |
-| 4. Feature Engineering | Philippe | TF-IDF baseline (BoW / n-grams optional) |
-| 5. Model Training | Philippe | Logistic Regression, Naive Bayes, Linear SVM + GridSearchCV |
-| 6. Evaluation | Joao | Accuracy, Precision, Recall, F1, confusion matrix, error analysis |
-| 7. Prediction | Joao | Apply pipeline to test set |
-| 8. Output | Joao | `submission.csv` + persisted `model_pipeline.joblib` |
+| Step | Owner | What happens |
+|------|-------|--------------|
+| Load & clean | Sabeur | Read the CSVs, drop duplicates, fix types |
+| EDA | Sabeur | Class balance, headline length, common words |
+| Preprocess | Sabeur | Lowercase, strip punctuation, tokenise, lemmatise -> `clean_text()` |
+| Features | Philippe | TF-IDF (with BoW / n-grams as alternatives) |
+| Train | Philippe | Logistic Regression, Naive Bayes, Linear SVM + GridSearchCV |
+| Evaluate | Joao | Accuracy, precision, recall, F1, confusion matrix, error analysis |
+| Predict | Joao | Run the pipeline on the test set |
+| Submit | Joao | Save `submission.csv` and the trained `model_pipeline.joblib` |
 
----
+## Rules we agreed on
 
-## Integration Rules
+- Sabeur's `clean_text()` is the only preprocessing function. Philippe and Joao import and reuse it.
+- Vectoriser + classifier go into one sklearn `Pipeline` that Philippe builds. Joao uses that exact object.
+- On test data: `.transform()` and `.predict()` only. Never `.fit()` - that would leak.
 
-- Sabeur defines `clean_text()` -> **Philippe MUST use it** (no custom preprocessing).
-- Philippe defines `vectorizer + model` -> **Joao MUST reuse it** (no retraining).
-- Do **NOT** call `.fit()` / `.fit_transform()` on test data - only `.transform()` and `.predict()`.
+## Three days, roughly
 
----
+**Day 1 - foundations**
+- Sabeur loads the data, does some EDA and writes the preprocessing.
+- Philippe ends the day setting up TF-IDF + a baseline model to make sure the cleaned data behaves.
 
-## 3-Day Timeline
+**Day 2 - modelling**
+- Philippe trains LR / NB / SVM, then tunes the best one with cross-validation.
+- Joao sets up the train/val split and the evaluation helpers.
 
-**Day 1 - Build the Foundation**
-- Sabeur: load data, EDA, preprocessing pipeline.
-- Philippe: TF-IDF setup, baseline model sanity check.
+**Day 3 - testing and wrap-up**
+- Joao runs predictions on the test set and digs into the errors.
+- The whole team reviews, finalises the submission and prepares the slides.
 
-**Day 2 - Modeling & Evaluation**
-- Philippe: train LR / NB / SVM, hyperparameter tuning.
-- Joao: train/validation split, evaluation framework.
+## Getting it running
 
-**Day 3 - Testing & Final Output**
-- Joao: predictions on test set, error analysis.
-- Team: review, finalize submission, prepare presentation.
+Clone the repo, set up a virtual environment, install the deps:
 
----
-
-## Getting Started
-
-### 1. Clone and create a virtual environment
 ```bash
 git clone <repo-url>
 cd fake-news-detection-nlp
@@ -89,14 +77,11 @@ python -m venv .venv
 .venv\Scripts\activate
 # macOS / Linux
 source .venv/bin/activate
-```
-
-### 2. Install dependencies
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Download NLTK resources (first run only)
+NLTK needs a couple of resources the first time:
+
 ```python
 import nltk
 nltk.download('stopwords')
@@ -104,43 +89,34 @@ nltk.download('wordnet')
 nltk.download('punkt')
 ```
 
-### 4. Run the notebook
+Then open the notebook:
+
 ```bash
 jupyter notebook main.ipynb
 ```
 
----
+## What we use
 
-## Tools & Libraries
+`pandas`, `numpy`, `scikit-learn`, `nltk`, `matplotlib`, `seaborn`, `joblib`, `jupyter`.
 
-`pandas`, `numpy`, `scikit-learn`, `nltk`, `matplotlib`, `seaborn`, `joblib`, `jupyter`
-
----
-
-## Dataset
+## The dataset
 
 | File | Columns | Notes |
 |------|---------|-------|
-| `training_data_lowercase.csv` | `label`, `headline` | `0 = Fake`, `1 = Real` - used to train & validate |
-| `testing_data_lowercase_nolabels.csv` | `headline` | No labels - predictions will be generated |
+| `training_data_lowercase.csv` | `label`, `headline` | 0 = fake, 1 = real. We train and validate on this. |
+| `testing_data_lowercase_nolabels.csv` | `headline` | No labels - we generate them. |
 
----
+## What we hand in
 
-## Deliverables
+1. The notebook ([main.ipynb](main.ipynb)).
+2. `submission.csv` with one prediction per test headline, in the original order, same separator and format.
+3. A short note on how well we expect the model to do (validation metrics + cross-validation results).
+4. A 10-minute presentation (template in [doc/](doc/)).
 
-1. **Python code** - well-documented notebook ([main.ipynb](main.ipynb)).
-2. **Predictions** - `submission.csv` with predicted labels (`0` / `1`) in the original test order, same separator/format.
-3. **Accuracy estimation** - validation metrics + cross-validation results.
-4. **Presentation** - 10-minute team presentation (template in [doc/](doc/)).
+## If we'd had more time
 
----
+- Try word embeddings (Word2Vec or GloVe).
+- A pretrained transformer (BERT, RoBERTa).
+- Wrap it in a small Streamlit app for live demos.
 
-## Optional Improvements
-
-- Word embeddings (Word2Vec / GloVe).
-- Transformer models (BERT / RoBERTa).
-- Streamlit web app for live demo.
-
----
-
-**Teamwork makes the model work!**
+Teamwork makes the model work.
