@@ -6,11 +6,13 @@ A small team project for IronHack week 4. We had three days to build a classifie
 
 ## The team
 
-| Member | What they own |
-|--------|--------------|
-| Sabeur | Data, cleaning, EDA, the `clean_text()` function |
-| Philippe | Vectoriser, models, hyperparameter tuning |
-| Joao | Train/val split, evaluation, predictions, final submission |
+A three-person team, split by stage of the pipeline:
+
+| Role | What they own |
+|------|--------------|
+| Data lead | Data, cleaning, EDA, the `clean_text()` function |
+| Modelling lead | Vectoriser, models, hyperparameter tuning |
+| Evaluation lead | Train/val split, evaluation, predictions, final submission |
 
 ## Results
 
@@ -48,39 +50,38 @@ fake-news-detection-nlp/
 
 ```
 raw csv  ->  clean  ->  preprocess  ->  vectorise  ->  train  ->  evaluate  ->  predict
-             Sabeur     Sabeur          Philippe       Philippe   Joao         Joao
 ```
 
 | Step | Owner | What happens |
 |------|-------|--------------|
-| Load & clean | Sabeur | Read the CSVs, drop duplicates, fix types |
-| EDA | Sabeur | Class balance, headline length, common words |
-| Preprocess | Sabeur | Lowercase, strip punctuation, tokenise, lemmatise -> `clean_text()` |
-| Features | Philippe | TF-IDF (with BoW / n-grams as alternatives) |
-| Train | Philippe | Logistic Regression, Naive Bayes, Linear SVM + GridSearchCV |
-| Evaluate | Joao | Accuracy, precision, recall, F1, confusion matrix, error analysis |
-| Predict | Joao | Run the pipeline on the test set |
-| Submit | Joao | Save `submission.csv` and the trained `model_pipeline.joblib` |
+| Load & clean | Data lead | Read the CSVs, drop duplicates, fix types |
+| EDA | Data lead | Class balance, headline length, common words |
+| Preprocess | Data lead | Lowercase, strip punctuation, tokenise, lemmatise -> `clean_text()` |
+| Features | Modelling lead | TF-IDF (with BoW / n-grams as alternatives) |
+| Train | Modelling lead | Logistic Regression, Naive Bayes, Linear SVM + GridSearchCV |
+| Evaluate | Evaluation lead | Accuracy, precision, recall, F1, confusion matrix, error analysis |
+| Predict | Evaluation lead | Run the pipeline on the test set |
+| Submit | Evaluation lead | Save `submission.csv` and the trained `model_pipeline.joblib` |
 
 ## Rules we agreed on
 
-- Sabeur's `clean_text()` is the only preprocessing function. Philippe and Joao import and reuse it.
-- Vectoriser + classifier go into one sklearn `Pipeline` that Philippe builds. Joao uses that exact object.
+- `clean_text()` is the only preprocessing function. Everyone imports and reuses it.
+- Vectoriser + classifier go into one sklearn `Pipeline`. Evaluation reuses that exact object.
 - On test data: `.transform()` and `.predict()` only. Never `.fit()` - that would leak.
 
 ## Three days, roughly
 
 **Day 1 - foundations**
-- Sabeur loads the data, does some EDA and writes the preprocessing.
-- Philippe ends the day setting up TF-IDF + a baseline model to make sure the cleaned data behaves.
+- Load the data, do some EDA, write the preprocessing.
+- End the day with TF-IDF + a baseline model to make sure the cleaned data behaves.
 
 **Day 2 - modelling**
-- Philippe trains LR / NB / SVM, then tunes the best one with cross-validation.
-- Joao sets up the train/val split and the evaluation helpers.
+- Train LR / NB / SVM, then tune the best one with cross-validation.
+- Set up the train/val split and the evaluation helpers.
 
 **Day 3 - testing and wrap-up**
-- Joao runs predictions on the test set and digs into the errors.
-- The whole team reviews, finalises the submission and prepares the slides.
+- Run predictions on the test set and dig into the errors.
+- Review, finalise the submission and prepare the slides.
 
 ## Getting it running
 
