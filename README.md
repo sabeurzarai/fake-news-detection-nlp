@@ -12,6 +12,21 @@ A small team project for IronHack week 4. We had three days to build a classifie
 | Philippe | Vectoriser, models, hyperparameter tuning |
 | Joao | Train/val split, evaluation, predictions, final submission |
 
+## Results
+
+After tuning, a **Linear SVM on TF-IDF features** came out on top.
+
+| Metric | Score |
+|--------|-------|
+| Validation accuracy | **92.6 %** |
+| Precision | 0.89 |
+| Recall | 0.97 |
+| F1 | 0.93 |
+| Baseline accuracy (untuned) | 94.24 % |
+| Best CV accuracy (after tuning) | 94.94 % |
+
+Takeaway: even a simple TF-IDF + linear model is surprisingly strong at this task *if* the preprocessing is done carefully.
+
 ## Repo layout
 
 ```
@@ -20,7 +35,9 @@ fake-news-detection-nlp/
 │   ├── training_data_lowercase.csv          # label + headline (0=fake, 1=real)
 │   └── testing_data_lowercase_nolabels.csv  # headline only - what we predict
 ├── doc/
-│   └── Presentation template.pptx
+│   ├── Presentation template.pptx
+│   ├── fake_news_detection_presentation.pptx
+│   └── challenge_insight_slide.pptx
 ├── main.ipynb                               # everything happens here
 ├── requirements.txt
 ├── .gitignore
@@ -106,12 +123,18 @@ jupyter notebook main.ipynb
 | `training_data_lowercase.csv` | `label`, `headline` | 0 = fake, 1 = real. We train and validate on this. |
 | `testing_data_lowercase_nolabels.csv` | `headline` | No labels - we generate them. |
 
+## Biggest challenge & key insight
+
+**Biggest challenge.** Fake news is written to look real - same language, same style, same clickbait patterns. Add sarcasm, evolving topics and noisy labels and it gets messy fast. That's why we put so much effort into preprocessing.
+
+**Key insight.** Even a simple NLP pipeline detects fake news well when the text is cleaned properly, the features are sensible, and the model is evaluated honestly. Fancy models are not always the answer.
+
 ## What we hand in
 
 1. The notebook ([main.ipynb](main.ipynb)).
 2. `submission.csv` with one prediction per test headline, in the original order, same separator and format.
 3. A short note on how well we expect the model to do (validation metrics + cross-validation results).
-4. A 10-minute presentation (template in [doc/](doc/)).
+4. A 10-minute presentation (slides in [doc/](doc/)).
 
 ## If we'd had more time
 
